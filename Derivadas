@@ -1,0 +1,101 @@
+/* Derivada de la función seno */
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+/*Declaracion de funciones*/
+float simple_deriva_a(float, float);  /*derivada hacia adelante (simple)*/
+float simple_deriva_c(float, float);  /*derivada central (simple)*/
+double simple_err (double);	/*error simple*/
+
+double doble_deriva_a(double, double);	/*derivada hacia adelante (doble)*/
+double doble_deriva_c(double, double);	/*derivada central (doble*/
+double doble_err (double);	/*error doble*/
+
+
+int main()
+{
+	/*Declaración de variables*/
+	double x1 = 2.5;
+
+	/*Tabla de valores para simple precision*/
+	FILE *puntos_s = fopen("simple.txt", "w");
+	/*Para simple precision*/
+	float d = 0.1;	
+	int i;
+	for (i = 1; i<20; i++)
+	{
+		double derv_a_s = simple_deriva_a((float)x1, d);
+		double err_a_s = simple_err(derv_a_s);
+		double derv_a_c = simple_deriva_c((float)x1, d);
+		double err_c_s = simple_err(derv_a_c);
+		fprintf(puntos_s, "%15.14f\t %15.14f\t %15.14f\n",d, err_a_s, err_c_s);
+		d = 0.1/(pow(2,i));
+	}
+	fclose(puntos_s);
+
+	/*Valores para doble precisión*/
+	FILE *puntos_d = fopen("doble.txt", "w");
+	/*Para doble precision*/
+	double e = 0.1;	
+	for (i = 1; i<30; i++)
+	{
+		double derv_a_d = doble_deriva_a(x1, e);
+		double err_a_d = doble_err(derv_a_d);
+		double derv_c_d = doble_deriva_c(x1, e);
+		double err_c_d = doble_err(derv_c_d);
+		fprintf(puntos_d, "%.18lf\t %15.14lf\t %15.14lf\n",e, err_a_d, err_c_d);
+		e = 0.1/(pow(2,i));
+	}
+	fclose(puntos_d);	
+
+	/*Intrucción para graficar*/
+	system("gnuplot -p practica1.gnu"); /*la p es de persistencia*/
+	return 0;
+}
+
+
+/*Funciones simple precisión*/
+float simple_deriva_a(float x, float d)
+{
+	float d_a;
+	d_a = (sinf(x + d) - sinf(x))/d;
+	return d_a;
+}
+
+float simple_deriva_c(float y, float e)
+{
+	float d_c;
+	d_c = (sinf(y + e) - sinf(y - e))/(2*e);
+	return d_c;
+}
+
+double simple_err(double val1)
+{
+	double err_;
+	err_ = fabs(cos(2.5) - val1);
+	return err_ ;
+}
+
+
+/*Funciones doble precisión*/
+double doble_deriva_a(double x, double d)
+{
+	double d_a;
+	d_a = (sin(x + d) - sin(x))/d;
+	return d_a;
+}
+
+double doble_deriva_c(double y, double e)
+{
+	double d_c;
+	d_c = (sin(y + e) - sin(y - e))/(2*e);
+	return d_c;
+}
+
+double doble_err(double val1)
+{
+	double err_;
+	err_ = fabs(cos(2.5) - val1);
+	return err_ ;
+}
